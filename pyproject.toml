@@ -1,0 +1,20 @@
+[tool.poetry]
+name = "imageapply"
+version = "0.1.0"
+description = "Simplifies the process of applying U-net style models to large images."
+authors = ["fynnsu <fynnsu@outlook.com>"]
+license = "LICENSE"
+readme = "README.md"
+packages = [{include = "imageapply"}]
+
+[tool.poetry.dependencies]
+python = "^3.8"
+torch = "^1.12.1"
+numpy = "^1.23.3"
+pytest = "^7.1.3"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
