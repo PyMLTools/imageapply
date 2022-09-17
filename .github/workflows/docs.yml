@@ -32,11 +32,12 @@ jobs:
         with:
           python-version: "3.x"
       
-      - name: Install Dependencies
-        run: |
-          python -m pip install --upgrade pip
-          pip install pdoc3
+      - name: Install Poetry
+        run: curl -sSL https://install.python-poetry.org | python3 -
       
+      - name: Install dependencies  
+        run:  poetry install --no-interaction --no-root --with dev
+
       - name: Generate Docs
         run: |
           pdoc -f -o ./docs --html ./imageapply
