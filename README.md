@@ -1,4 +1,5 @@
 # Image Apply
+![test](https://github.com/PyMLTools/imageapply/actions/workflows/tests.yml/badge.svg)
 
 A package for improving the simplicity of adapting Segmentation Models to large images.
 
