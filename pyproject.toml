@@ -18,6 +18,7 @@ Sphinx = "^5"
 pytest = "^7"
 sphinx-rtd-theme = "^1.0.0"
 sphinxcontrib-napoleon = "^0.7"
+pdoc3 = "^0.10.0"
 
 [build-system]
 requires = ["poetry-core"]
