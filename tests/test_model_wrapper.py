@@ -1,4 +1,4 @@
-from image_apply.image_apply import FlexibleModel
+from imageapply import FlexibleModel
 import numpy as np
 
 #TODO: Add a lot more tests
