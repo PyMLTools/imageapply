@@ -1,5 +1,5 @@
 # Preprocessing tools for training
-from data import data_object
+from .data import data_object
 
 def divide_into_regions(data : data_object, region_size : tuple, pad_mode : str) -> data_object:
     """
