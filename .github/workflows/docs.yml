@@ -40,7 +40,7 @@ jobs:
 
       - name: Generate Docs
         run: |
-          pdoc -f -o ./docs --html ./imageapply
+          poetry run pdoc -f -o ./docs --html ./imageapply
       
       - name: Setup Pages
         uses: actions/configure-pages@v2
