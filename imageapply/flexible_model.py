@@ -9,8 +9,22 @@ import numpy as np
 from .tools import apply_model, pad_to_multiple, crop_to_original, divide_into_regions, combine_regions
 
 class FlexibleModel:
+    """
+    This model is designed to be used with models that can only handle a certain input size.
+    """
 
     def __init__(self, model, input_size, max_batch_size=None):
+        """
+        Creates a new FlexibleModel object.
+        
+        Args:
+            model (function): The model to apply to the data
+            input_size (tuple): The size of the input to the model
+            max_batch_size (int): The maximum batch size to use when applying the model
+            
+        Returns:
+            FlexibleModel: The new FlexibleModel object
+        """
         assert model is not None and callable(model), "Model must be callable"
         assert input_size[0] is None, "First dimension of input size must be None"
 
@@ -19,6 +33,15 @@ class FlexibleModel:
         self.max_batch_size = max_batch_size
     
     def __call__(self, batch):
+        """
+        Runs the model on the batch of data.
+        
+        Args:
+            batch (T): The batch of data to run the model on
+        
+        Returns:
+            T: The output of the model
+        """
         # Assume for now, data is a batch numpy array
         return self._pad_and_apply(batch)
 
