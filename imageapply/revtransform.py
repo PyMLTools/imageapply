@@ -1,5 +1,5 @@
 from abc import abstractmethod
-from typing import Callable, List
+from typing import Callable, List, Tuple
 from .tools import pad_to_multiple, crop_to_original, divide_into_regions, combine_regions
 from .data import T
 
@@ -70,11 +70,18 @@ class DivideCombine(ReversibleTransformation):
     """
     Divide the data into regions of size region_size, reverse combines the regions into the original shape.
     """
-    def __init__(self, region_size):
+    def __init__(self, region_size:Tuple):
+        """
+        Args:
+            region_size: The size of the regions to divide the data into. 
+        """
         self.region_size = region_size
     
     def _forward(self, data):
-        self.original_shape = data.shape
+        """
+        Forward pass, divide the data into regions.
+        """
+        self.original_shape = data.shape # save the original shape for the backward pass
         return divide_into_regions(data, self.region_size)
     
     def _backward(self, data):
