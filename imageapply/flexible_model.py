@@ -5,7 +5,7 @@
 #TODO: Limit image dims to 3
 #TODO: Implement a Data class (with Pytorch, Numpy, and Tensorflow subclasses) to handle the different data types
 
-from .revtransform import PadCrop, DivideCombine, CombinedModel
+from .revtransform import PadCrop, DivideCombine, CombinedModel, BasicTTA
 
 class FlexibleModel:
     """
@@ -34,6 +34,7 @@ class FlexibleModel:
         self.tta = basic_tta
         
         self.combined = CombinedModel([
+            BasicTTA() if self.tta else None,
             PadCrop(self.input_size, pad_mode="zeros", pad_position="end"),
             DivideCombine(self.input_size),
             model

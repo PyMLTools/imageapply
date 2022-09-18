@@ -2,6 +2,7 @@ from abc import abstractmethod
 from typing import Callable, List, Tuple
 from .tools import pad_to_multiple, crop_to_original, divide_into_regions, combine_regions
 from .data import T
+import numpy as np
 
 class CombinedModel:
     """
@@ -13,7 +14,8 @@ class CombinedModel:
         
         model = self.steps[-1]
         for step in reversed(self.steps[:-1]):
-            model = step(model)
+            if step is not None:
+                model = step(model)
         self.model = model
         
     def __call__(self, data:T) -> T:
@@ -25,7 +27,8 @@ class ReversibleTransformation:
     A data transformation that can be reversed.
     """
     
-    def __init__(self):
+    def __init__(self, distributed:bool=False):
+        self.distributed = distributed
         self._inter = id
 
     def _attach_intermediary(self, intermediary:Callable[[T], T]):
@@ -43,8 +46,43 @@ class ReversibleTransformation:
         if isinstance(data_or_inter, Callable):
             self._attach_intermediary(data_or_inter)
             return self
+        elif self.distributed:
+            return self._backward([self._inter(x) for x in self._forward(data_or_inter)])
         else:
             return self._backward(self._inter(self._forward(data_or_inter)))
+        
+class BasicTTA(ReversibleTransformation):
+    """
+    Basic Test Time Augmentation. Flips image horizontally, vertically and both.
+    """
+    
+    def __init__(self, combine_mode:str="mean"):
+        super().__init__(distributed=True)
+        self.combine_mode = combine_mode
+    
+    def _forward(self, data):
+        return [
+            data,
+            np.flip(data, 1),
+            np.flip(data, 2),
+            np.flip(data, (1, 2))
+        ]
+    
+    def _backward(self, data):
+        data = [
+            data[0],
+            np.flip(data[1], 1),
+            np.flip(data[2], 2),
+            np.flip(data[3], (1, 2))
+        ]
+        
+        if self.combine_mode == 'mean':
+            return np.mean(data, axis=0)
+        else:
+            raise ValueError(f"Unknown combine mode {self.combine_mode}")
+        
+    def __repr__(self) -> str:
+        return f"BasicTTA(combine_mode={self.combine_mode})"
 
 
 class PadCrop(ReversibleTransformation):
@@ -52,6 +90,7 @@ class PadCrop(ReversibleTransformation):
     Pad the data to a multiple of the input size, reverse crops the data to the original shape.
     """
     def __init__(self, input_size, pad_mode="reflect", pad_position="end"):
+        super().__init__()
         self.input_size = input_size
         self.pad_mode = pad_mode
         self.pad_position = pad_position
@@ -75,6 +114,7 @@ class DivideCombine(ReversibleTransformation):
         Args:
             region_size: The size of the regions to divide the data into. 
         """
+        super().__init__()
         self.region_size = region_size
     
     def _forward(self, data):
