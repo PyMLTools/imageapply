@@ -1,9 +1,3 @@
-# Debugging
-from ast import Call
-import sys
-sys.path.insert(0,'.')
-
-
 from abc import abstractmethod
 from typing import Callable, List, Tuple, Union
 from imageapply.tools import pad_to_multiple, crop_to_original, divide_into_regions, combine_regions
@@ -222,20 +216,3 @@ class DivideCombine(ReversibleOperation):
     def __repr__(self):
         return f"DivideCombine(region_size={self.region_size})"
     
-    
-    
-if __name__ == '__main__':
-    # Evaluate memory usage
-    from pympler.tracker import SummaryTracker
-    from imageapply.flexible_model import FlexibleModel
-    
-    
-    z = np.random.rand(1000, 1000, 20, 3)
-    tracker = SummaryTracker()
-    
-    model = FlexibleModel(lambda x: np.copy(x) + 1, (None, 4, 6, 1), basic_tta=True)
-    y = model(z)
-
-    tracker.print_diff()
-    
-    print(y.shape, z[0, 0, 0, 0], y[0, 0, 0, 0])
