@@ -6,6 +6,7 @@
 #TODO: Implement a Data class (with Pytorch, Numpy, and Tensorflow subclasses) to handle the different data types
 
 from .revtransform import PadCrop, DivideCombine, CombinedModel, BasicTTA
+from .tools import apply_model
 
 class FlexibleModel:
     """
@@ -37,7 +38,7 @@ class FlexibleModel:
             BasicTTA() if self.tta else None,
             PadCrop(self.input_size, pad_mode="zeros", pad_position="end"),
             DivideCombine(self.input_size),
-            model
+            lambda x: apply_model(self.model, x, batch_size=self.max_batch_size)
         ]) 
     
     def __call__(self, batch):
