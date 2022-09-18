@@ -12,7 +12,6 @@ python = "^3.8"
 torch = "^1"
 numpy = "^1"
 
-
 [tool.poetry.group.dev.dependencies]
 Sphinx = "^5"
 pytest = "^7"
@@ -24,3 +23,7 @@ pdoc3 = "^0.10.0"
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
 
+[tool.pytest.ini_options]
+pythonpath = [
+  "."
+]
