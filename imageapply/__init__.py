@@ -24,5 +24,4 @@ masks = model(images)
 """
 
 
-
 from .flexible_model import *

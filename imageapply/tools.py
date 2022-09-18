@@ -1,8 +1,7 @@
 import numpy as np
-import torch
-from typing import Callable, TypeVar
+from typing import Callable
+from .data import T
 
-T = TypeVar("T", np.ndarray, torch.Tensor)
 
 def apply_model(model : Callable[[T], T], data : T, batch_size=None) -> T:
     """
