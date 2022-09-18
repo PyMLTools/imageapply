@@ -1,5 +1,5 @@
 from abc import abstractmethod
-from typing import Callable, List, Tuple
+from typing import Callable, List, Tuple, Union
 from .tools import pad_to_multiple, crop_to_original, divide_into_regions, combine_regions
 from .data import T
 import numpy as np
@@ -42,7 +42,7 @@ class ReversibleTransformation:
     def _backward(self, data):
         raise NotImplementedError("backward not implemented")
     
-    def __call__(self, data_or_inter:T|Callable[[T], T]) -> T:
+    def __call__(self, data_or_inter:Union[T, Callable]) -> T:
         if isinstance(data_or_inter, Callable):
             self._attach_intermediary(data_or_inter)
             return self
