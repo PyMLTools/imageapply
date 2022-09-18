@@ -51,20 +51,3 @@ class FlexibleModel:
         """
         # Assume for now, data is a batch numpy array
         return self.combined(batch) 
-         
-    # def _pad_and_apply(self, batch, pad_mode="zeros", pad_position="end"):
-    #     out = pad_to_multiple(batch, self.input_size, pad_mode=pad_mode, pad_position=pad_position)
-    #     out = self._apply_on_size_multiple(out)
-    #     out = crop_to_original(out, batch.shape, pad_position=pad_position)
-    #     return out
-
-    # def _apply_on_size_multiple(self, batch):
-    #     # First dim is batch dim
-
-    #     out = divide_into_regions(batch, self.input_size)        
-
-    #     out = apply_model(self.model, out, batch_size=self.max_batch_size)
-
-    #     out = combine_regions(out, self.input_size, batch.shape)
-
-    #     return out
