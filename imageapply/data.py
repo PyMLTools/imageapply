@@ -1,5 +1,9 @@
 from abc import ABC, abstractmethod, abstractproperty
 import numpy as np
+import torch
+from typing import TypeVar
+
+T = TypeVar("T", np.ndarray, torch.Tensor)
 
 class data_object(ABC):
 

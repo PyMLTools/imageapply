@@ -5,15 +5,14 @@
 #TODO: Limit image dims to 3
 #TODO: Implement a Data class (with Pytorch, Numpy, and Tensorflow subclasses) to handle the different data types
 
-import numpy as np
-from .tools import apply_model, pad_to_multiple, crop_to_original, divide_into_regions, combine_regions
+from .revtransform import PadCrop, DivideCombine, CombinedModel
 
 class FlexibleModel:
     """
     This model is designed to be used with models that can only handle a certain input size.
     """
 
-    def __init__(self, model, input_size, max_batch_size=None):
+    def __init__(self, model, input_size, max_batch_size=None, basic_tta=False):
         """
         Creates a new FlexibleModel object.
         
@@ -21,6 +20,7 @@ class FlexibleModel:
             model (function): The model to apply to the data
             input_size (tuple): The size of the input to the model
             max_batch_size (int): The maximum batch size to use when applying the model
+            basic_tta (bool): Whether to use basic test time augmentation
             
         Returns:
             FlexibleModel: The new FlexibleModel object
@@ -31,6 +31,13 @@ class FlexibleModel:
         self.model = model
         self.input_size = input_size[1:]
         self.max_batch_size = max_batch_size
+        self.tta = basic_tta
+        
+        self.combined = CombinedModel([
+            PadCrop(self.input_size, pad_mode="zeros", pad_position="end"),
+            DivideCombine(self.input_size),
+            model
+        ]) 
     
     def __call__(self, batch):
         """
@@ -43,21 +50,4 @@ class FlexibleModel:
             T: The output of the model
         """
         # Assume for now, data is a batch numpy array
-        return self._pad_and_apply(batch)
-
-    def _pad_and_apply(self, batch, pad_mode="zeros", pad_position="end"):
-        out = pad_to_multiple(batch, self.input_size, pad_mode=pad_mode, pad_position=pad_position)
-        out = self._apply_on_size_multiple(out)
-        out = crop_to_original(out, batch.shape, pad_position=pad_position)
-        return out
-
-    def _apply_on_size_multiple(self, batch):
-        # First dim is batch dim
-
-        out = divide_into_regions(batch, self.input_size)        
-
-        out = apply_model(self.model, out, batch_size=self.max_batch_size)
-
-        out = combine_regions(out, self.input_size, batch.shape)
-
-        return out
+        return self.combined(batch) 
